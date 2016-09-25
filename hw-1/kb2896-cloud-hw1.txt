@@ -1,0 +1,55 @@
+Summary of The Google File System
+
+- scalable distrubuted file system for large distributed and data intensive applications
+- provides efficient performance on large number of clients
+- system provides fault tolerance by constant monitoring, replicating crucial data, and fast and automatic recovery.
+- capability of running on inexpensive commodity hardware
+- minimal metadata storage and separation of data flow from control flow to maximize network bandwidth usage
+- elaxed consistency model which simplifies filesystem design, improves efficiency and provides crucial guarantees in terms of data availability to applications using GFS
+
+Design Considerations:
+1. Component failures have been considered as a norm rather than an exception, because GFS is designed to work over storage systems made of inexpensive hardware.
+2. A modest number of huge files, of sizes in multiple gigabytes, is considered to be normal use case for storing and processing big chunks of data using GFS.
+3. Files are modified by appending new data, rather than overwriting existing data and once written, all files are read only in a sequential manner.
+4. API designs for filesystem and applications intended to run over it have been optimised to support high write throughput and atomicity multiple clients concurrently append to a file. This is supported with relaxed consistency model for GFS.
+5. High sustained bandwidth is more important than low latency as it's assumed that most applications using GFS give priority to processing large amounts of data, rather than quick response times.
+
+Interface: 
+Apart from the standard file system operations, 'create, delete, open, close, read and write' it also provides 'snapshot' and 'record append'. These operations allow users to create a cooy of a file or directory tree at low cost and allow multiple clients to append data concurrently to a file while guaranteeing atomicity, respectively.
+
+Architecture:
+A GFS cluster consists of single 'master' and multiple 'chunkservers' which are accessed concurrently by multiple clients. Files are divided into fixed-size 'chunks'. Each chunk is
+identified by an immutable and globally unique 64 bit 'chunk handle' assigned by the master at the time of chunk creation. Chunkservers store chunks on local disks as Linux files and
+read or write chunk data specified by a chunk handle and byte range. For reliability, each chunk is replicated on multiple chunkservers and the metadata of the whole filesystem including information about chunks is maintained by the master node. Clients interact with the master node for metadata related operations but all data-bearing communication is directly handled by chunkservers, as delegated by the master.
+The single master node, specifically handles all filesystem metadata operations and has minimized or no involvment in reading and writing data, thus preventing it from becoming a bottleneck in I/O operations. The client contacts the master node for chunkserver information for read/write operations. The master replies with the corresponding chunk handle and locations of the replicas, client caches this response using file name and chunk index as the key and then directly contacts relevant chunkservers in the future for data operations.
+
+Metadata and Operation Log:
+Maintaining metadata in master memory and operation log on disk are very crucial for functioning of GFS. GFS stores the file and chunk namepsaces, mapping from files to chunks and the locations of each chunk's replicas in the memory of master node. The 'namespaces' and 'file chunk mapping' are kept in 'operation log files' on the master's disk and also replicated on remote machines, this is done to maintain consistency in case of failure of master node. The chunk location information is node stored persistently by the master, instead it queries this at startup time from each of the chunkservers or whenever a chunkserver joins the cluster.
+
+System Interactions:
+1. Leases and Mutation Order: To maintain a consisten mutation order over chunks and their replicas, master adopts a leasing approach for allocating chunks to filesystem. First the master grants a chunk lease to one of the replicas, called `primary`. The primary picks a serial order for all mutations (content or metadata changes) to be applied o the chunk. All replicas follow this order when applying mutations and this the file system global mutation order is maintained with consistency.
+2. Data Flow: The data flow is decoupled from control flow to use the network efiiciently. The control information flows to primary and then to secondary replicas where is data flows linearly along a carefully picked chain of chunkservers in a pipelined fashion so as to fully utilize each machine's outbound bandwidth to transfer the data as fast as possible.
+Another goal is to avoid network bottlenecks and high-latency links as much as possible, each machine forwards the data to the "closest" machine in the network topology that has not received it. Latency is minimized in network connections by transferring data over TCP connections. Once a chunkserver receives some data it starts forwarding immediately, known as pipelining and this further helpful in reducing latency across replica nodes.
+3. Atomic Record Appends: GFS provides an atomic record operation called 'record append'. The client specifies only the data and not the offset unlike traditional file system writes. The GFS appends this data to the file at least once, atomically at an offest of it's choosing and returns that offset to the client.
+4. Snapshot: The 'snapshot' operation makes a copy of a file or a directory tree almost instantaneously, while minimizing any interruptions of ongoing mutations.
+
+Master Operations:
+The master node is responsible for all metadata operations related to GFS, including namespace operations, managing chunk replicas, placement decisions, creating new chunks(lease) and replicas and laod balancing across chunkservers.
+1. Namsepace management and Locking: Each master operation obtains a set of locks before it runs to maintain serialization of operations and also allow other concurrent operations running on the filesystem. For namepsace management, GFS represents it's namespace as a mapping of lookup table mapping full pathnames to metadata. With prefix compression, this table is efficiently represented in memory and modified quickly.
+2. Replica Placement: GFS has a well defined 'chunk replica placement' policy that serves two purposes: maximizes data reliability and availability and maximizes bandwidth utilization.
+3. Chunk Replica Creation: Chunk replicas are created for three reasons: chunk creation, re-replication and rebalancing.
+- Chunk creation refers to the creation of a new chunk when the filesystem gets data to be written in form of request for a chunk location to the master node.
+- Re-replication is the situation where master re-replicates a chunk as soon as the number of available replicas falls below the user-specified number. This could happend due to a number of reasons such as, chunkserver failure, corruption of replica data on chunkserver or disk failure over chunkserver(s).
+- Rebalancing of replicas is done periodically by master to optimize disk space utilization and load balancing.
+4. Garbage Collection: This refers to claiming back the free space after a file is deleted. GFS claims back the physical storage space in a lazy fashion and not immediately after the data is deleted. This approach maskes the system more simpler and reliable. Upon deletion of a file, master logs it in operation log and instead of actual deletion the file is renamed, along with deletion timestamp. The file is deleted finally, after a grace period of 72 hours and this is when GFS actually claims back the physical storage.
+5. Stale replica detection: The master also periodically scans the chunkservers for any stale replicas which may have occurred due to failure of chukserver in applying mutations to a chunk. Upon finding such stale replicas, master removes these stale replicas via garbage collection and if needed creates more copies of chunk replicas.
+
+Fault Tolerance and Diagnosis: As GFS is designed to run over inexpensive commodity hardware comprising a large number of storage machines/disks and to handle large amounts of data, it is critical that the system is incorporated with fault tolerance mechanisms. To achieve this GFS has set some goals and strategies to achive those, as discussed below.
+1. High Availability - The GFS should be available at all times, despite possible component failures. This is achieved by:
+        - Fast Recovery: GFS doesn't distinguishes between normal and abnormal termination of master or chunkserver, hence enabling them to restore their state and start within a few seconds irrespective of the fact, how they might have stopped.
+        - Chunk replication: To deal with situations like disk failures, network failure or server failure etc, data is replicated over multiple chunkservers, so in case one or more chunkservers become unavailable, there are replicas available to take up the request of data on their behalf.
+        - Master replication: The master state is replicated for reliability. Its operation log and checkpoints are replicated on multiple machines. If a master fails, 'shadow' masters take over the control, which provide read-only access to the filesystem until master node takes back control. In case of permanent failure, the external monitoring system associated with GFS creates a new master node for the cluster.
+
+2. Data Integrity: Each chunkserver uses checksumming to detect corruption of stored data. To confirm integrity of data across multiple replicas, the chunkservers obtain checksum(e.g., MD5) which is compared against the checksum values of othe chunkservers containing the replicas of the same chunk of data to detect anamolies. This mechanism prevents against data integrity failures due to component failures or read-write failures.
+
+3. Diagnostic Tools: GFS servers generate diagnostic logs that record significant events and prove helpful in problem isolation, debugging and performance analysis. The performance effect of this logging is minimal whereas benefits are huge, as controlling and observing a cluster of thousands of nodes is not an easy task without proper logging mechanisms.
