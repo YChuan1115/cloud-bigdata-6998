@@ -12,8 +12,8 @@
 
 %enumerate
 \usepackage{enumitem}
-\setlist[enumerate]{itemsep=1pt, topsep=0pt}
-\setlist[itemize]{itemsep=1pt, topsep=0pt}
+\setlist[enumerate]{itemsep=0pt, topsep=0pt}
+\setlist[itemize]{itemsep=0pt, topsep=0pt}
 
 %tex formatting
 \usepackage{textcomp}
@@ -86,25 +86,21 @@ This article summarizes the various aspects, design principles and goals of \tex
 
 The \textit{Google File System(GFS)}\cite{Ghemawat:2003:GFS:945445.945450} is a scalable distributed file system designed for large, distributed and data intensive applications. It provides efficient performance on large number of clients and storage machines and also offers fault tolerance by constant monitoring, replication of crucial data, and fast and automatic recovery. In addition, \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} is capable of running on inexpensive commodity hardware. It mininmizes the metadata storage for file system and separates data flow from control flow to maximize network bandwidth usage. The relaxed consistency model of \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} simplifies file system design greatly by excluding factors such as symlinks etc in comparison to traditional file systems and also provides crucial guarantees in terms of data availability to applications using \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450}.\par
 
-The following sections summarize the \textit{Google File System}\cite{Ghemawat:2003:GFS:945445.945450} and it's key details with respect to file system design, interface and operation.
-
-\section*{Design Considerations}
-\textit{The Google File System}\cite{Ghemawat:2003:GFS:945445.945450} is oriented towards supporting \textit{big data applications} i.e applications which read, write and process large amounts of data. Such applications are generally driven by concept of distributed computing as crunching data in size of multiple gigabytes/terabytes is a time consuming and expensive effort. These distributed applications typically also require guarantees in terms of data availability, integrity, reduced network latency, file system consistency and efficient metadata management. \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} tries to address these concerns by making following design considerations:
+\textbf{Design:} The data intensive distributed applications require guarantees in terms of data availability, integrity, reduced network latency, file system consistency and efficient metadata management. \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} tries to address these concerns by making following design considerations:
 
 \begin{enumerate}
-\item Component failures have been considered as a norm rather than an exception, because \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} is designed to work over storage systems made of inexpensive hardware.
+\item Component failures are considered as a norm rather than an exception to tackle failure of hardware components.
 
-\item A modest number of huge files, of sizes in multiple gigabytes, is considered to be normal use case for storing and processing big chunks of data using \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450}.
+\item The average size of files stoered on \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} is assumed to be of multiple gigabytes.
 
-\item Most files are modified by appending new data, rather than overwriting existing data and once written, all files are read only in a sequential manner.
+\item Most files are modified by appending new data, rather than overwriting existing data and once written, all files are read-only in a sequential manner.
 
-\item API designs for file system and applications intended to run over it have been optimised to support high read and write throughputs along with multiple clients concurrently appending to a file. This is supported with \textit{atomicity} of writes guarantee provided by relaxed consistency model for \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450}.
+\item API designs for \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} and applications intended to run over it have been optimised to support high read and write throughputs along with multiple clients concurrently appending to a file. This is supported with \textit{atomicity of writes} guarantee provided by relaxed consistency model for \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450}.
 
-\item High sustained bandwidth is more important than low latency as it's assumed that most applications using \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} give priority to processing large amounts of data, rather than quick response times.
+\item High sustained bandwidth is more important than low latency as it's assumed that most applications prioritize processing large amounts of data than quick response times.
 \end{enumerate}
 
-\section*{File System Interface}
-Apart from the standard file system operations, \textit{create, delete, open, close, read and write}, \textit{Google File System}\cite{Ghemawat:2003:GFS:945445.945450} also provides \textit{snapshot} and \textit{record append} operations.\par
+\textbf{File System Interface:} Apart from the standard file system operations, \textit{create, delete, open, close, read and write}, \textit{Google File System}\cite{Ghemawat:2003:GFS:945445.945450} provides two new operations:
 
 \begin{itemize}
 \item The \textit{snapshot} operation facilitates users by creating a copy of a file or directory tree at low cost, sometimes even receursively if required by user.
@@ -112,50 +108,14 @@ Apart from the standard file system operations, \textit{create, delete, open, cl
 \item The \textit{record append} operation allows multiple clients to append data concurrently to a file while guaranteeing atomicity of operations.
 \end{itemize}
 
-\section*{Architecture}
-A \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} cluster consists of single \textit{master} and multiple \textit{chunkservers} which are accessed concurrently by multiple clients. Files are divided into fixed-size \textit{chunks}. Each \textit{chunk} is identified by an immutable and globally unique 64 bit \textit{chunk handle} assigned by the master at the time of chunk creation. Chunkservers store chunks on local disks as Linux files and read or write chunk data specified by a chunk handle and byte range. For reliability, each chunk is replicated on multiple chunkservers and the metadata of the whole file system including information about chunks is maintained by the master node. Clients interact with the master node for metadata related operations but all data-bearing communication is directly handled by chunkservers, as delegated by the master.\par
+\textbf{Architecture:} A \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} cluster consists of single \textit{master} and multiple \textit{chunkservers} which are accessed concurrently by multiple clients. Files are divided into fixed-size \textit{chunks}. Each \textit{chunk} is identified by an immutable and globally unique 64 bit \textit{chunk handle} assigned by the master at the time of chunk creation. Chunkservers store chunks on local disks as Linux files and read or write chunk data specified by a chunk handle and byte range. For reliability, each chunk is replicated on multiple chunkservers and the metadata of the whole file system including information about chunks is maintained by the master node. Clients interact with the master node for metadata related operations but all data-bearing communication is directly handled by chunkservers, as delegated by the master.\par
 
-The single master node, specifically handles all filesystem metadata operations and has minimized or no involvment in reading and writing data, thus preventing it from becoming a bottleneck in I/O operations. The client contacts the master node for chunkserver information for read/write operations. The master replies with the corresponding chunk handle and locations of the replicas, client caches this response using file name and chunk index as the key and then directly contacts relevant chunkservers in the future for data operations.\par
+The single master node, specifically handles all filesystem metadata operations and records operation logs.It has minimal or no involvment in reading and writing data, thus preventing it from becoming a bottleneck in I/O operations. The client contacts the master node for chunkserver information for read/write operations. The master replies with the corresponding chunk handle and locations of the replicas, client caches this response using file name and chunk index as the key and then directly contacts relevant chunkservers in the future for data operations.\par
 
-\section*{Metadata and Operation Log}
-Maintaining metadata in memory at master node and writing operation log on disk are very crucial for efficient functioning of \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} and providing fault tolerance, respectively. \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} stores the \textit{file and chunk namepsaces, mapping from files to chunks and the locations of each chunk's replicas} in the memory of master node as these are to be sent as quick response to clients requesting addresses of chunkservers to read/write data. The \textit{namespaces} and \textit{file-chunk mapping} are also kept in \textit{operation log files} on the master's disk and also replicated on remote machines to maintain consistency in case of failure of master node. The chunk location information is not stored persistently by the master, instead it queries this at startup time from each of the chunkservers or whenever a chunkserver joins the cluster.\par
-
-\section*{System Interactions}
-The \textit{Google File System}\cite{Ghemawat:2003:GFS:945445.945450} employs a series of system interaction within it's components i.e. master node, chunkservers and master replicas to form the actual working functionalities of the file system. These interactions are summarized below:
-\begin{enumerate}
-        \item \textbf{Leases and Mutation Order}: To maintain a consistent mutation order over chunks and their replicas, master node adopts a leasing approach for allocating chunks to file system. First the master grants a chunk lease to one of the replicas, called \textit{primary}. The primary picks a serial order for all mutations (content or metadata changes) to be applied to the chunk and communicates to replica chunkservers. All \textit{replicas} follow this order when applying mutations and thus the file system global mutation order is maintained with consistency.
-
-        \item \textbf{Replica Placement}: \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} has a well defined 'chunk replica placement' policy that serves two purposes: maximizes data reliability and availability and maximizes bandwidth utilization.
-
-        \item \textbf{Chunk Replica Creation}: Chunk replicas are created for three reasons: \textit{chunk creation, re-replication and rebalancing}.
-        \begin{itemize}
-                \item \textit{Chunk creation} refers to the creation of a new chunk when the filesystem gets data to be written in form of request for a chunk location to the master node.
-
-                \item \textit{Re-replication} is the situation where master re-replicates a chunk as soon as the number of available replicas falls below the user-specified number. This could happend due to a number of reasons such as, chunkserver failure, corruption of replica data on chunkserver or disk failure over chunkserver(s).
-
-                \item \textit{Rebalancing} of replicas is done periodically by master to optimize disk space utilization and load balancing.
-        \end{itemize}
-        
-        \item \textbf{Garbage Collection}: This refers to claiming back the free space after a file is deleted. \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} renames the deleted file with the timestamp of delete operation, logs it and finally claims back the physical storage space in a lazy fashion after 72 hours have passed.
-
-        \item \textbf{Stale replica detection}: The master also periodically scans the chunkservers for any stale replicas which may have occurred due to failure of chukserver in applying mutations to a chunk. Upon finding such stale replicas, master removes these stale replicas via garbage collection and if needed creates more copies of chunk replicas.
-
-\end{enumerate}
-
-% \newpage
-
-\section*{Fault Tolerance and Diagnosis}
-As \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} is designed to run over inexpensive commodity hardware comprising a large number of storage machines/disks and to handle large amounts of data, it is critical that the system is incorporated with fault tolerance mechanisms. To achieve this \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} has set some goals and strategies to achive those, as discussed below.
+\textbf{Fault Tolerance and Diagnosis:} \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} applies an array of measures to incorporate fault tolerance against possible failure of system components:
 
 \begin{enumerate}
-        \item High Availability - The \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} should be available at all times, despite possible component failures. This is achieved by:
-        \begin{itemize}
-                \item \textbf{Fast Recovery}: \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} doesn't distinguishes between normal and abnormal termination of master or chunkserver, hence enabling them to restore their state and start within a few seconds irrespective of the fact, how they might have stopped.
-
-                \item \textbf{Chunk replication}: To deal with situations like disk failures, network failure or server failure etc, data is replicated over multiple chunkservers, so in case one or more chunkservers become unavailable, there are replicas available to take up the request of data on their behalf.
-
-                \item \textbf{Master replication}: The master state is replicated for reliability. Its operation log and checkpoints are replicated on multiple machines. If a master fails, 'shadow' masters take over the control, which provide read-only access to the filesystem until master node takes back control. In case of permanent failure, the external monitoring system associated with \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} creates a new master node for the cluster.
-        \end{itemize}
+        \item \textbf{High Availability} - \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} employs \textit{fast recovery} wherein it doesn't distinguishes between normal and abnormal termination of master or chunkserver, hence enabling them to restore their state and start within a few seconds irrespective of cause of shutting down. It also implements \textit{chunk replication} to deal with situations like disk failures, network failure or server failure etc, so in case one or more chunkservers become unavailable, there are replicas available to take up the requests for data on their behalf. \textit{GFS}\cite{Ghemawat:2003:GFS:945445.945450} also replicates metadata stored in \textit{master} node to safeguard against failure of master node.
 
         \item \textbf{Data Integrity}: Each chunkserver uses checksumming to detect corruption of stored data. To confirm integrity of data across multiple replicas, the chunkservers obtain checksum(e.g., MD5) which is compared against the checksum values of othe chunkservers containing the replicas of the same chunk of data to detect anamolies. This mechanism prevents against data integrity failures due to component failures or read-write failures.
 
