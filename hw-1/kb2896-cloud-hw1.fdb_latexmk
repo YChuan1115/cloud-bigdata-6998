@@ -1,14 +1,15 @@
 # Fdb version 3
-["bibtex kb2896-cloud-hw1"] 1474919251 "kb2896-cloud-hw1.aux" "kb2896-cloud-hw1.bbl" "kb2896-cloud-hw1" 1474919251
+["bibtex kb2896-cloud-hw1"] 1474919251 "kb2896-cloud-hw1.aux" "kb2896-cloud-hw1.bbl" "kb2896-cloud-hw1" 1474919483
   "/usr/share/texlive/texmf-dist/bibtex/bst/base/ieeetr.bst" 1292289607 18361 1a00e58565e7f19bf2b3e1bfb82254ae ""
   "945450.bib" 1474919209 616 f4a20ee5450fac8884a3796383bbc754 ""
-  "kb2896-cloud-hw1.aux" 1474919251 1387 2617b6001d68541ac6c443fc2c833141 ""
+  "kb2896-cloud-hw1.aux" 1474919483 1387 2617b6001d68541ac6c443fc2c833141 ""
   "kb2896-cloud-hw1.bcf" 0 -1 0 ""
   (generated)
   "kb2896-cloud-hw1.bbl"
-["pdflatex"] 1474919251 "kb2896-cloud-hw1.tex" "/home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw1.pdf" "kb2896-cloud-hw1" 1474919251
+  "kb2896-cloud-hw1.blg"
+["pdflatex"] 1474919483 "kb2896-cloud-hw1.tex" "/home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw1.pdf" "kb2896-cloud-hw1" 1474919483
   "/etc/texmf/web2c/texmf.cnf" 1473094728 1101 af7716885e081ab43982cab7b4672c1a ""
-  "/home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw1.aux" 1474919251 1387 2617b6001d68541ac6c443fc2c833141 ""
+  "/home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw1.aux" 1474919483 1387 2617b6001d68541ac6c443fc2c833141 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/helvetic/phvb8r.tfm" 1136768653 4484 b828043cbd581d289d955903c1339981 ""
@@ -66,17 +67,17 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1458942643 31351 b32c45dce4a01cb7b53ed90c546614ca ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1473094906 1863403 f3ff9a4253bcb5fb9a9baaf0c572cb01 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1473094934 3859904 1f7bc72e387b321270e7b8839e6d3782 ""
-  "kb2896-cloud-hw1.aux" 1474919251 1387 2617b6001d68541ac6c443fc2c833141 ""
+  "kb2896-cloud-hw1.aux" 1474919483 1387 2617b6001d68541ac6c443fc2c833141 ""
   "kb2896-cloud-hw1.bbl" 1474919251 307 94506eb189ae693d316b38454b003244 "bibtex kb2896-cloud-hw1"
-  "kb2896-cloud-hw1.out" 1474919251 0 d41d8cd98f00b204e9800998ecf8427e ""
-  "kb2896-cloud-hw1.tex" 1474919250 8144 5d78b6b9401d9fa2a82a17e803ea0593 ""
+  "kb2896-cloud-hw1.out" 1474919483 0 d41d8cd98f00b204e9800998ecf8427e ""
+  "kb2896-cloud-hw1.tex" 1474919482 8145 7ad872c99bb9b765b77f2a7511b208c2 ""
   (generated)
-  "/home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw1.log"
-  "kb2896-cloud-hw1.out"
-  "kb2896-cloud-hw1.log"
-  "kb2896-cloud-hw1.pdf"
-  "kb2896-cloud-hw1.toc"
-  "/home/kunal/Documents/cloud-bigdata-6998/kb2896-cloud-hw1.log"
-  "/home/kunal/Documents/cloud-bigdata-6998/kb2896-cloud-hw1.pdf"
-  "kb2896-cloud-hw1.aux"
   "/home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw1.pdf"
+  "/home/kunal/Documents/cloud-bigdata-6998/kb2896-cloud-hw1.log"
+  "kb2896-cloud-hw1.toc"
+  "kb2896-cloud-hw1.log"
+  "/home/kunal/Documents/cloud-bigdata-6998/kb2896-cloud-hw1.pdf"
+  "kb2896-cloud-hw1.pdf"
+  "kb2896-cloud-hw1.aux"
+  "kb2896-cloud-hw1.out"
+  "/home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw1.log"

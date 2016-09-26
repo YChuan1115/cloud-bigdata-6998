@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.9.5)  26 SEP 2016 15:47
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.9.5)  26 SEP 2016 15:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **kb2896-cloud-hw1.tex
-(/home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw1.tex
+(./kb2896-cloud-hw1.tex
 LaTeX2e <2016/02/01>
 Babel <3.9q> and hyphenation patterns for 81 language(s) loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -291,7 +291,7 @@ Package: titlesec 2016/03/15 v2.10.1 Sectioning titles
 (/usr/share/texlive/texmf-dist/tex/latex/parskip/parskip.sty
 Package: parskip 2001/04/09 non-zero parskip adjustments
 )
-(/home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw1.aux)
+(./kb2896-cloud-hw1.aux)
 \openout1 = `kb2896-cloud-hw1.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 69.
@@ -394,8 +394,7 @@ LaTeX Info: Redefining \ref on input line 69.
 LaTeX Info: Redefining \pageref on input line 69.
 LaTeX Info: Redefining \nameref on input line 69.
 
-(/home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw1.out)
-(/home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw1.out)
+(./kb2896-cloud-hw1.out) (./kb2896-cloud-hw1.out)
 \@outlinefile=\write3
 \openout3 = `kb2896-cloud-hw1.out'.
 
@@ -416,13 +415,12 @@ LaTeX Font Info:    Try loading font information for TS1+phv on input line 106.
 File: ts1phv.fd 2001/06/04 scalable font definitions for TS1/phv.
 ) [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-(/home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw1.bbl)
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./kb2896-cloud-hw1.bbl)
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 128.
  [2]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 128.
 
-(/home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw1.aux)
+(./kb2896-cloud-hw1.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 128.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 128.
 Package rerunfilecheck Info: File `kb2896-cloud-hw1.out' has not changed.
@@ -430,8 +428,8 @@ Package rerunfilecheck Info: File `kb2896-cloud-hw1.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 128.
  ) 
 Here is how much of TeX's memory you used:
- 6650 strings out of 493029
- 97810 string characters out of 6136235
+ 6649 strings out of 493029
+ 97132 string characters out of 6136235
  187042 words of memory out of 5000000
  10131 multiletter control sequences out of 15000+600000
  21007 words of font info for 28 fonts, out of 8000000 for 9000
@@ -441,8 +439,7 @@ Here is how much of TeX's memory you used:
 e/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist
 /fonts/type1/urw/helvetic/uhvr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1
 /urw/helvetic/uhvro8a.pfb>
-Output written on /home/kunal/Documents/cloud-bigdata-6998/hw-1/kb2896-cloud-hw
-1.pdf (2 pages, 33691 bytes).
+Output written on kb2896-cloud-hw1.pdf (2 pages, 33698 bytes).
 PDF statistics:
  56 PDF objects out of 1000 (max. 8388607)
  48 compressed objects within 1 object stream
