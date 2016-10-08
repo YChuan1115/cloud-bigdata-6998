@@ -108,17 +108,17 @@ The main motivation for \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} 
 The following sections provide a concise summary of the architecture and design of \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} key-value data store.
 
 \section*{Design Considerations}
-Consistency: \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} is designed to be an eventually consistent data store, with replication for high availability, meaning that once it receives a data update it propogates it in background to the replicas of the data, however there might be conflicts in view of the data at a given time instance between replicas which is gracefully handled by \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} via certain conflict resolving mechanisms.\par
+\textbf{Consistency:} \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} is designed to be an eventually consistent data store, with replication for high availability, meaning that once it receives a data update it propogates it in background to the replicas of the data, however there might be conflicts in view of the data at a given time instance between replicas which is gracefully handled by \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} via certain conflict resolving mechanisms.\par
 
-Conflict Resolution: Traditional data stores, which execute conflict resolution during writes and reject writes if not all/majority of replicas of data can be accessed at the given time. However, \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} is meant to be an "always writeable" data store, hence rejecting writes is not a viable option, especially for applications targeting customers over the web. So \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} handles any conflicts in data view at time of data read operations. \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} allows the applications using it to specify their own conflic resolution mechanisms.\par
+\textbf{Conflict Resolution:} Traditional data stores, which execute conflict resolution during writes and reject writes if not all/majority of replicas of data can be accessed at the given time. However, \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} is meant to be an "always writeable" data store, hence rejecting writes is not a viable option, especially for applications targeting customers over the web. So \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} handles any conflicts in data view at time of data read operations. \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} allows the applications using it to specify their own conflic resolution mechanisms.\par
 
-Incremental Scalability: \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} can scale out one storage node at a time with minimal impact on system as well as operator.\par
+\textbf{Incremental Scalability:} \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} can scale out one storage node at a time with minimal impact on system as well as operator.\par
 
-Symmetry: Every node in \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} cluster is treated equally, no concept of master-slave nodes.\par
+\textbf{Symmetry:} Every node in \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} cluster is treated equally, no concept of master-slave nodes.\par
 
-Decentralization: The design favours peer-to -peer techniques to provide high availability and scalability, including the gossip protocol for failure detection.\par
+\textbf{Decentralization:} The design favours peer-to -peer techniques to provide high availability and scalability, including the gossip protocol for failure detection.\par
 
-Heterogeneity: \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} also tries to exploit heterogenity of the physical infrastructure, i.e. work distribution is proportional to the capabilities of individual storage nodes.\par
+\textbf{Heterogeneity:} \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} also tries to exploit heterogenity of the physical infrastructure, i.e. work distribution is proportional to the capabilities of individual storage nodes.\par
 
 \section*{System Architecture/Implementation Details}
 The core distributed systems techniques used in \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} are: partitioning, replication, versioning, membership, failure handling and scaling. Each of these are described individually as:
