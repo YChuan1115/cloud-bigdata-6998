@@ -1,0 +1,172 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{geometry}
+
+% Comment the following lines to use the default Computer Modern font
+\usepackage{helvet}
+\renewcommand\familydefault{\sfdefault} 
+\usepackage[T1]{fontenc}
+
+%hyperlink
+\usepackage[colorlinks=true, citecolor=red]{hyperref}
+
+%enumerate
+\usepackage{enumitem}
+\setlist[enumerate]{itemsep=0pt, topsep=0pt}
+\setlist[itemize]{itemsep=0pt, topsep=0pt}
+
+%tex formatting
+\usepackage{textcomp}
+
+%headers and footers
+\usepackage{fancyhdr}
+
+%title formatting
+\usepackage{titlesec}
+
+\usepackage[parfill]{parskip}
+
+% Avoid line on top of pages
+\renewcommand{\headrulewidth}{0pt}
+
+% Set your name here
+\def\name{Kunal Baweja}
+
+% Set university id here
+\def\uni{kb2896}
+
+%Set assignment title here
+\def\assignment{Review - Dynamo: Amazon's Highly Available Key-Value Store}
+
+%Set subject name here
+\def\subject{COMS E6998 Cloud Computing \& Big Data (Fall 2016)}
+
+\titlespacing{\section}{0pt}{12pt}{0pt}
+
+\geometry{
+        headheight=15pt,
+        left=0.6in,
+        top=0.6in,
+        right=0.5in
+}
+
+
+% Customize pageheaders
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[L]{\name \hspace{0.25cm} \uni}
+\fancyfoot[R]{\thepage}
+\thispagestyle{empty}
+
+% Custom section fonts
+\titleformat*{\section}{\large\bfseries}
+\setcounter{secnumdepth}{0}
+
+% Don't indent paragraphs.
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+% Assignment Heading in Center
+\begin{center}
+    {\large \assignment}
+    \vspace{0.1em}
+\end{center}
+
+Name: {\name}\\
+UNI: {\uni}\\
+{\subject} \hfill {\today}
+
+%horizontal line
+\rule{\textwidth}{0.2pt}
+
+\section*{Introduction}
+\textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} is a highly scalable, reliable and distributed key-value storage system for large scale applications, particularly by Amazon.com. It manages state of services that require high reliability and need tight control over the tradeoffs between availability, consistency, cost-effectiveness and performance.\par
+
+\textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} combines a number of techniques to achieve scalability and availability:
+\begin{itemize}
+        \setlength\itemsep{0em}
+        \item Data is partitioned and replicated using consistent hashing.
+        \item Consistency is provided by object versioning and during updates its provided by a quorum-like technique and a decentralized replica synchronization protocol.
+        \item A gossip based distributed failure detection and membership protocol for reliability.
+\end{itemize}
+
+\section*{Motivation}
+The main motivation for \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} data storage system is the importance of state management by an application requiring scalability and reliability. \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} is specifically designed for applications which require high availiability of data store, along with scalability properties and require only primary-key access to a data store. The specialized feature of providing only a key-value storage implementation stems from the fact that many application store and retrieve data by primary key and do not require the complexity of a traditional RDBMS.\par
+
+\section*{System Assumptions and Requirements}
+\textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} is based on the following assumptions and requirements for a data storage system:
+\begin{enumerate}
+        \setlength\itemsep{0em}
+        \item A query model is either a simple read or write operation uniquely identified by a key.
+        \item An operation does not span multiple data items.
+        \item State of a data item is stored as binary object identified by a unique key.
+        \item Unlike standard databases providing ACID (Atomicity, Consistency, Isolation, Durability) properties, \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} concentrates only on applications with weaker consistency, to rather provide high availability and instead of providing isolation guarantees it allows only single key updates in a single operation.
+        \item Efficiency is guaranteed by providing a choice for applications to configure \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} to achieve required latency and throughput via balancing tradeoffs between performance, cost efficiency, availability and durability guarantees. This configuration is further used to negotiate a Service Level Agreement(SLA) with the client requesting a service, to provide a response in bounded time.
+\end{enumerate}
+
+The following sections provide a concise summary of the architecture and design of \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} key-value data store.
+
+\section*{Design Considerations}
+Consistency: \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} is designed to be an eventually consistent data store, with replication for high availability, meaning that once it receives a data update it propogates it in background to the replicas of the data, however there might be conflicts in view of the data at a given time instance between replicas which is gracefully handled by \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} via certain conflict resolving mechanisms.\par
+
+Conflict Resolution: Traditional data stores, which execute conflict resolution during writes and reject writes if not all/majority of replicas of data can be accessed at the given time. However, \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} is meant to be an "always writeable" data store, hence rejecting writes is not a viable option, especially for applications targeting customers over the web. So \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} handles any conflicts in data view at time of data read operations. \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} allows the applications using it to specify their own conflic resolution mechanisms.\par
+
+Incremental Scalability: \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} can scale out one storage node at a time with minimal impact on system as well as operator.\par
+
+Symmetry: Every node in \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} cluster is treated equally, no concept of master-slave nodes.\par
+
+Decentralization: The design favours peer-to -peer techniques to provide high availability and scalability, including the gossip protocol for failure detection.\par
+
+Heterogeneity: \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} also tries to exploit heterogenity of the physical infrastructure, i.e. work distribution is proportional to the capabilities of individual storage nodes.\par
+
+\section*{System Architecture/Implementation Details}
+The core distributed systems techniques used in \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} are: partitioning, replication, versioning, membership, failure handling and scaling. Each of these are described individually as:
+
+\begin{enumerate}
+\item \textbf{System Interface}\\
+\textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} has a simple interface that provides get() and put() operations to retrieve and store/update data respectively. The put() operation takes key, context and object arguments, determines where to put the replicas of the object based on the MD5 hash of the key and writes the replicas to the disk. The get() operation takes key as an argument and retrieves an data object along with its context. Here, context refers to the encoded system metadata about the object which includes information such as version number etc.
+
+\item \textbf{Partitioning Algorithm}\\
+\textit{Dynamo's} partitioning scheme relies on consistent hashing to distribute load across multiple storage hosts i.e partioning of data stored. In consistent hashing the output range of the hash function is treated as a "ring" and each node in the system is assigned a random value within this ring, identified as the "position" of the node. Each data item's key is hashed and the item is assigned to a node by matching the node's "position" to the hash value.\par
+
+In the matching mechanism, once the hash is calculated on key of data item, its destination node's position is determined by scanning through the circular space of assigned positions of nodes and once a node with position value greater than calculated hash is found, the data is stored in that node. The advantage of this approach is that in case a node goes offline, the next available node in the circular space takes over in its place.
+
+\item \textbf{Replication}\\
+\textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} replicates its data on multiple hosts to achieve high availability and ruability. Each key is assigned to a co-ordinator node which is responsible for duplication of data. The co-ordinator node stores the key within itself and the N-1 successor nodes in the storage node ring, where number N is configured by application using \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281}.
+
+\item \textbf{Data Versioning}\\
+\textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} provides eventual consistency which allows updates to propagated to replicas asynchronously. Hence a put() call may only update the data in some of the nodes/copies of data. These updates are guaranteed to propogate in background to all the replicas, however sometimes due to component failure this might not happen and may result in subsequent get() calls getting an inconsistent data view, which is resolved by the resolution mechanism specifed by the application.\par
+
+Further, to guarantee "always writeable" property, even in the case of unavailability of the latest data version, \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} treats each modification as a new and immutable version of data. Hence multiple versions of the data can be present in the system at the given time and most of the times newer version subsumes the older version, except in case of conflicts, where a version branching may happen due to application of update operation on an older version, which is eventually resolved at the time of read. 
+Versioning is taken care of by using vector clocks, wherein a list of \textit{(node, counter)} pair is used to identify the different versions of an object.\par
+
+\item \textbf{get() and put() operations}\\
+Any storage node in \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} can receive client requests for operations which can be routed to the desired node in two ways:
+        \begin{itemize}
+                \setlength\itemsep{0em}
+                \item Through a generic load balancer that will select a node based on load information.
+                \item Using a partition-aware client library that routes requests directly to appropriate co-ordinator node.
+        \end{itemize}
+
+\item \textbf{Handling Temporary Failures}\\
+To avoid failures, \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} performs read and write operations on the first N healthy nodes from the preference list, and these N healthy nodes might not be the same as the first N nodes from the consistent hashing ring. Along with this a "sloppy quorum technique" is followed wherein the application using \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} can specify the minimum number of nodes to which data should be written or read from for acceptance of the read/write operations.
+
+\item \textbf{Handling Permanent Failures}\\
+\textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} implements a replica synchronization protocol using Merkel Trees to keep the replicas synchronized which allows faster detection of inconsistencies between replicas along within minimal data transfer as the comparisons are made on the hash values stored within these Merkle Trees.
+
+\item \textbf{Membership and Failure Detection}\\
+In \textit{Dynamo's} storage nodes consistent hash ring an explicit mechanism is required to add or remove a node from the ring, which is handled via an administrator who issues the relevant commands. These commands about membership changes are recorded at the node to which the command is issued and communicated to other nodes in the ring via a gossip based protocol which eventually maintains a consistent view of membership of nodes.\par
+
+Failure detection is implemented internally in \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} to avoid attempting communications with a failed node. A given node A determines another node B to be failed if B does not responds to A's communincation request within a bounded time period. In such case node A contacts alternate nodes which map to the same partition as B to service the requests. This failure detection is also based on gossip protocol where in the nodes randomly ping each other at fixed intervals.
+
+\item \textbf{Adding/Removing Storage Nodes}\\
+A new node added into the \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} system is assigned a number of tokens which denote a random hash mapping on the consistent hash ring, described above. For a new node added to the system, a range of keys are assigned to it for storage and since some of those keys would have been previously assigned for handling to the previously present nodes, they will now stop recording the data items for those keys and transfer the keys to the newly added node.\par
+
+The exact reverse happens in removal of a storage node, where the keys that were assigned to the node removed are now assigned to the nodes left within the \textit{Dynamo}\cite{DeCandia:2007:DAH:1294261.1294281} system, based on the hash range those keys belong to in the consistent hash ring.
+\end{enumerate}
+
+\bibliography{1294281}
+\bibliographystyle{ieeetr}
+
+\end{document}
