@@ -1,2 +1,8 @@
-aws
-gfs-sosp2003.pdf
+#ignore everything
+*
+
+# exceptions
+!*.pdf
+!*.tex
+!*.py
+!*.java
