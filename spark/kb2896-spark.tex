@@ -1,0 +1,132 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{geometry}
+
+% Comment the following lines to use the default Computer Modern font
+\usepackage{helvet}
+\renewcommand\familydefault{\sfdefault} 
+\usepackage[T1]{fontenc}
+
+%hyperlink
+\usepackage[colorlinks=true, citecolor=red]{hyperref}
+
+%enumerate
+\usepackage{enumitem}
+\setlist[enumerate]{itemsep=0pt, topsep=0pt}
+\setlist[itemize]{itemsep=0pt, topsep=0pt}
+
+%tex formatting
+\usepackage{textcomp}
+
+%headers and footers
+\usepackage{fancyhdr}
+
+%title formatting
+\usepackage{titlesec}
+
+\usepackage[parfill]{parskip}
+
+% Avoid line on top of pages
+\renewcommand{\headrulewidth}{0pt}
+
+% Set your name here
+\def\name{Kunal Baweja}
+
+% Set university id here
+\def\uni{kb2896}
+
+%Set assignment title here
+\def\assignment{Review - \textit{Spark}: Cluster Computing with Working Set}
+
+%Set subject name here
+\def\subject{COMS E6998 Cloud Computing \& Big Data (Fall 2016)}
+
+\titlespacing{\section}{0pt}{1pt}{0pt}
+
+\geometry{
+        headheight=15pt,
+        left=0.6in,
+        top=0.6in,
+        right=0.5in
+}
+
+
+% Customize pageheaders
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[L]{\name \hspace{0.25cm} \uni}
+\fancyfoot[R]{\thepage}
+\thispagestyle{empty}
+
+% Custom section fonts
+\titleformat*{\section}{\large\bfseries}
+\setcounter{secnumdepth}{0}
+
+% Don't indent paragraphs.
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+% Assignment Heading in Center
+\begin{center}
+    \textbf{\large \assignment}
+    \vspace{0.1em}
+\end{center}
+
+Name: {\name}\\
+UNI: {\uni}\\
+{\subject} \hfill {\today}
+
+%horizontal line
+\rule{\textwidth}{0.2pt}
+
+\section*{Introduction}
+The \textit{Spark}\cite{Zaharia:2010:SCC:1863103.1863113} cluster computing framework introduced in the paper provides a simple support for working data sets, which can be reused multiple times in applications across multiple parallel operations, unlike the traditional MapReduce based frameworks. Moreover, it still retains the scalability and fault tolerance equivalen to  MapReduce by introducing an bastraction called \textit{RDD (Resilient Distributed Dataset)} which is a read-only collection of objects partitioned across a set of machines.\par
+
+\section*{Programming Model}
+Developers using \textit{spark}\cite{Zaharia:2010:SCC:1863103.1863113} are required to write a high-level control flow of their application, known as \textit{driver program} which launches \textit{parellel operations} that run on top of \textit{resilient distributed datasets} which are described below:
+
+\textbf{1. Resilient Distributed Datasets (RDD)}\\
+RDD represents a read-only collectios of objects partitioned across a set of machines that can be rebuilt if a partition is lost. Users can explicitly
+cache an RDD in memory across machines and reuse it in multiple MapReduce-like parallel operations.\par
+Fault tolerance is achieved through a notion of \textit{lineage} i.e if a partition is lost, the RDD reconstructs it from information retained in the system to derive it back from other partitions, hence re-building the partition.
+
+Each RDD is represented by a Scala object (scala integrated with \textit{spark}\cite{Zaharia:2010:SCC:1863103.1863113}) and allows programmers to construct RDDs in four ways:
+\begin{enumerate}
+    \item From a \textit{file} in shared file system.
+
+    \item By dividing a scala collection into a number of slices sent to multiple nodes (known as \textit{paralleliztion}).
+    
+    \item By transforming an existing RDD i.e. changing a dataset of elements of type A to dataset with elements of type B.
+    
+    \item By changing the persistence of an RDD i.e specifying \textit{cache} and/or \textit{save} actions on it
+\end{enumerate}
+
+\textbf{2. Parallel Operations}\\
+Majorly three types of parallel operations can be performed on RDDs:
+\begin{enumerate}
+    \item \textit{reduce} operation combines dataset elements to produce result at the driver program.
+    
+    \item \textit{collect} operation sends all the elements of the dataset to the driver program
+    
+    \item \textit{foreach} operation passes each element through a user provided function.
+\end{enumerate}
+
+\textbf{3. Shared Variables}\\
+\textit{Spark}\cite{Zaharia:2010:SCC:1863103.1863113} also provides restricted shared variables of two types:
+
+\begin{enumerate}    
+    \item \textit{Broadcast variables:} These act as wrappers which ensure that each value is copied to all of the worker nodes, but only once.
+    
+    \item \textit{Accumulators}: Worker nodes can only add data to these variables which can be read only by the driver program.
+\end{enumerate}
+
+\section*{Working of Spark}
+\textit{Spark}\cite{Zaharia:2010:SCC:1863103.1863113} runs on top of \textit{Mesos} operating system for clusters which allows multiple parallel applications to share a cluster in a fine grained manner. When the driver program invokes a paralle operation, \textit{spark}\cite{Zaharia:2010:SCC:1863103.1863113} creates \textit{tasks} to process each partition of the dataset and sends these tasks to worker nodes via delayed scheduling. Different types of RDDs differ in their implementation of RDD interface, the most prominnent ones being \textit{MappedDataset} and \textit{CachedDataset}.\par
+
+While shipping tasks to workers, \textit{closures} are shipped to worker nodes. These tasks ultimately fetch the dataset from the workers and add them using the accumulators, which leads to the driver program reading off the combined data quickly from the accumulator, as described above.\par
+
+\bibliography{1863113}
+\bibliographystyle{ieeetr}
+
+\end{document}

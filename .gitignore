@@ -1,8 +1,10 @@
-#ignore everything
-*
-
-# exceptions
-!*.pdf
-!*.tex
-!*.py
-!*.java
+#exceptions
+aws
+Tweetmap
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out

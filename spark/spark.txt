@@ -1,0 +1,37 @@
+The Spark cluster computing framework introduced in the paper provides a simple support for working data sets, which can be reused multiple times in applications across multiple parallel operations, unlike the traditional MapReduce based frameworks. Moreover, it still retains the scalability and fault tolerance equivalen to  MapReduce by introducing an bastraction called RDD (Resilient Distributed Dataset) which is a read-only collection of objects partitioned across a set of machines.
+
+
+Programming Model
+------------------
+Developers using spark are required to write a high-level control flow of their application, known as \textit{driver program} which launches \textit{parellel operations} that run on top of \textit{resilient distributed datasets}.
+
+Resilient Distributed Datasets (RDD)
+------------------------------------
+RDD represents a read-only collectios of objects partitioned across a set of machines that can be rebuilt if a partition is lost. Users can explicitly
+cache an RDD in memory across machines and reuse it in multiple MapReduce-like parallel operations.
+Fault tolerance is achieved through a notion of \textit{lineage} i.e if a partition is lost, the RDD reconstructs it from information retained in the system to derive it back from other partitions, hence re-building the partition.
+
+Each RDD is represented by a Scala object (scala integrated with Spark) and allows programmers to construct RDDs in four ways:
+	1. From a \textit{file} in shared file system.
+	2. By dividing a scala collection into a number of slices sent to multiple nodes (known as \textit{paralleliztion}).
+    3. By transforming an existing RDD i.e. changing a dataset of elements of type A to dataset with elements of type B.
+    4. By changing the persistence of an RDD i.e specifying \textit{cache} and/or \textit{save} actions on it
+
+Parallel Operations
+-------------------
+Majorly three types of parallel operations can be performed on RDDs:
+	1. \textit{reduce} operation combines dataset elements to produce result at the driver program.
+	2. \textit{collect} operation sends all the elements of the dataset to the driver program
+	3. \textit{foreach} operation passes each element through a user provided function.
+
+Shared Variables
+----------------
+Spark also provides restricted shared variables of two types:
+	1. \textit{Broadcast variables:} These act as wrappers which ensure that each value is copied to all of the worker nodes, but only once.
+	2. \textit{Accumulators}: Worker nodes can only add data to these variables which can be read only by the driver program.
+
+Working of Spark
+----------------
+Spark runs on top of \textit{Mesos} operating system for clusters which allows multiple parallel applications to share a cluster in a fine grained manner. When the driver program invokes a paralle operation, Spark creates \textit{tasks} to process each partition of the dataset and sends these tasks to worker nodes via delayed scheduling. Different types of RDDs differ in their implementation of RDD interface, the most prominnent ones being \textit{MappedDataset} and \textit{CachedDataset}.
+
+While shipping tasks to workers, \textit{closures} are shipped to worker nodes. These tasks ultimately fetch the dataset from the workers and add them using the accumulators, which leads to the driver program reading off the combined data quickly from the accumulator, as described above.
