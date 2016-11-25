@@ -8,3 +8,5 @@ Tweetmap
 *.fls
 *.log
 *.out
+ParkWizard/
+tweet-sentiment/
